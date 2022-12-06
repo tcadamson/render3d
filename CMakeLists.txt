@@ -16,7 +16,7 @@ if(MSVC)
 endif()
 
 set(RENDER3D_ENTRY main.cpp)
-add_executable(render3d WIN32 ${RENDER3D_ENTRY} lib/glad/src/glad.c)
+add_executable(render3d #[[WIN32]] ${RENDER3D_ENTRY} lib/glad/src/glad.c)
 target_link_libraries(render3d ${OPENGL_LIBRARIES} glfw)
 
 if(MSVC)
