@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 const int WINDOW_WIDTH = 1280;
 const int WINDOW_HEIGHT = 720;
