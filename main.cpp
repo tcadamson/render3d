@@ -9,14 +9,19 @@ void framebufferSizeCallback(GLFWwindow *window, int width, int height)
 
 int main()
 {
+    const int WINDOW_WIDTH = 1280;
+    const int WINDOW_HEIGHT = 720;
+    const int OPENGL_VERSION_MAJOR = 3;
+    const int OPENGL_VERSION_MINOR = 3;
+
     // GLFW initialization (supports OpenGL >= 3.3)
     if (!glfwInit())
         return -1;
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, OPENGL_VERSION_MAJOR);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_VERSION_MINOR);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Needed for OS X compatibility
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "render3d", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "render3d", NULL, NULL);
     if (!window)
     {
         std::cout << "Failed to initialize GLFW window" << std::endl;
@@ -31,18 +36,15 @@ int main()
         return -1;
     }
 
-    glViewport(0, 0, 1280, 720);
+    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     glClearColor(0, 0, 0, 0);
     while (!glfwWindowShouldClose(window))
     {
-        // Render here
         glClear(GL_COLOR_BUFFER_BIT);
-        // Swap front and back buffers
         glfwSwapBuffers(window);
-        // Poll for and process events
         glfwPollEvents();
     }
-    glfwTerminate();
 
+    glfwTerminate();
     return 0;
 }
