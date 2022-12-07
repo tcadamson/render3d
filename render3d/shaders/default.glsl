@@ -1,20 +1,25 @@
 #ifdef VERTEX
 
 layout (location = 0) in vec3 pos;
+layout (location = 1) in vec3 color;
+out vec3 vertexColor;
+uniform bool test;
 
 void main()
 {
-    gl_Position = vec4(pos.x, pos.y, pos.z, 1.0f);
+    gl_Position = vec4(pos, 1.0f);
+    vertexColor = color;
 }
 
 #endif
 #ifdef FRAGMENT
 
-out vec4 color;
+out vec4 fragmentColor;
+in vec3 vertexColor;
 
 void main()
 {
-    color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    fragmentColor = vec4(vertexColor, 1.0f);
 }
 
 #endif
