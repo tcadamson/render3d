@@ -20,8 +20,14 @@ else()
 endif()
 
 file(GLOB LIB_SOURCES lib/glad/src/glad.c)
+file(GLOB PROJECT_SHADERS render3d/*.glsl)
 file(GLOB PROJECT_HEADERS render3d/*.h)
 file(GLOB PROJECT_SOURCES main.cpp render3d/*.cpp)
 add_definitions(-DGLFW_INCLUDE_NONE)
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${LIB_SOURCES})
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${PROJECT_SHADERS} ${LIB_SOURCES})
 target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES} ${GLAD_LIBRARIES})
+
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/render3d/shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>/render3d/shaders
+    DEPENDS ${PROJECT_SHADERS})
