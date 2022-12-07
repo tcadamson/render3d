@@ -8,7 +8,7 @@ option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)
 option(GLFW_BUILD_TESTS OFF)
 add_subdirectory(lib/glfw/)
-include_directories(lib/glfw/include/ lib/glad/include/ lib/stb/)
+include_directories(lib/glfw/include/ lib/glad/include/ lib/stb/ lib/glm/)
 
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")

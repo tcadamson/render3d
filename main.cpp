@@ -4,6 +4,9 @@
 #include <vector>
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 // https://github.com/nothings/stb/blob/master/stb_image.h#L4
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
