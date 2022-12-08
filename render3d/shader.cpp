@@ -78,6 +78,11 @@ void Shader::setFloat(const std::string &name, float value) const
     glUniform1i(glGetUniformLocation(programID, name.c_str()), static_cast<int>(value));
 }
 
+void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
+{
+    glUniformMatrix4fv(glGetUniformLocation(programID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+}
+
 unsigned int Shader::compileShader(GLenum shaderType, const std::string &fileContent)
 {
     const char *shaderSource = fileContent.c_str();

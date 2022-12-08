@@ -1,15 +1,13 @@
 #ifdef VERTEX
 
 layout (location = 0) in vec3 pos;
-layout (location = 1) in vec3 color;
-layout (location = 2) in vec2 texel;
-out vec3 vertexColor;
+layout (location = 1) in vec2 texel;
 out vec2 vertexTexel;
+uniform mat4 combination;
 
 void main()
 {
-    gl_Position = vec4(pos, 1.0f);
-    vertexColor = color;
+    gl_Position = combination * vec4(pos, 1.0f);
     vertexTexel = texel;
 }
 
@@ -17,7 +15,6 @@ void main()
 #ifdef FRAGMENT
 
 out vec4 fragmentColor;
-in vec3 vertexColor;
 in vec2 vertexTexel;
 uniform sampler2D textureData;
 

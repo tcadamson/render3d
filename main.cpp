@@ -13,10 +13,10 @@
 
 int main()
 {
-    const int WINDOW_WIDTH = 1280;
-    const int WINDOW_HEIGHT = 720;
-    if (!glfwInit())
-        return -1;
+    const int WINDOW_WIDTH = 1000;
+    const int WINDOW_HEIGHT = 1000;
+    // GLFW + OpenGL initial setup operations
+    glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -25,7 +25,7 @@ int main()
     GLFWwindow *window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "render3d", nullptr, nullptr);
     if (!window)
     {
-        std::cout << "Failed to initialize GLFW window" << std::endl;
+        std::cout << "Failed to initialize GLFW window." << std::endl;
         glfwTerminate();
         return -1;
     }
@@ -36,55 +36,72 @@ int main()
         glViewport(0, 0, width, height);
     });
     glfwMakeContextCurrent(window);
-
-    // GLAD initialization (must be called before any OpenGL function)
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-
-    // Texture render test
+    gladLoadGL();
+    glEnable(GL_DEPTH_TEST);
     Shader shader("default");
-    float vertices[]
+
+    // Cube rendering segment
+    // Cube vertices courtesy of https://learnopengl.com/code_viewer.php?code=getting-started/cube_vertices
+    const float cubeVertices[]
     {
-        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f
-    };
-    unsigned int indices[]
-    {
-        0, 1, 3,
-        1, 2, 3
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+         0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+         0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+         0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+         0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+         0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+        -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+         0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+         0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+         0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+         0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+         0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+         0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+         0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+         0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+         0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f
     };
     unsigned int vbo;
     unsigned int vao;
-    unsigned int ebo;
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-    // Vertex (3 attributes): 12 position bytes + 12 color bytes + 2 texel bytes
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+    // Vertex (2 attributes): 12 position bytes + 8 texel bytes
     // Position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)nullptr);
     glEnableVertexAttribArray(0);
-    // Color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
     // Texel attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
+    // Texture loading segment via stbi_image.h
     int textureWidth;
     int textureHeight;
     int textureChannels;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char *textureData = stbi_load("render3d/textures/catcat.png", &textureWidth, &textureHeight, &textureChannels, 0);
+    unsigned char *textureData = stbi_load("render3d/textures/cube.png", &textureWidth, &textureHeight, &textureChannels, 0);
     unsigned int texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -105,23 +122,44 @@ int main()
 
     while (!glfwWindowShouldClose(window))
     {
-        // Input (will go here when needed)
-        // Render
+        // Background clear color (pure white)
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Cube rendering math
+        const float orbitRadius = 4.0f;
+        const float orbitSpeed = 40.0f;
+        const float orbitBodyScale = 0.75f;
+        const float spinSpeed = 40.0f;
+        int combinationLocation = glGetUniformLocation(shader.programID, "combination");
+        glm::vec3 spinAxis(1.0f, 0.5f, 0.3f);
+        glm::vec3 orbitAxis(0.0f, 1.0f, 0.0f);
+        glm::mat4 model(1.0f);
+        glm::mat4 view(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -4.0f)));
+        glm::mat4 projection(glm::perspective(glm::radians(45.0f), static_cast<float>(WINDOW_WIDTH) / WINDOW_HEIGHT, 0.1f, 100.0f));
+        model = glm::rotate(model, static_cast<float>(glfwGetTime()) * glm::radians(spinSpeed), glm::vec3(0.5f, 1.0f, 0.0f));
+        glUniformMatrix4fv(combinationLocation, 1, GL_FALSE, glm::value_ptr(projection * view * model));
         glBindTexture(GL_TEXTURE_2D, texture);
-        shader.useProgram();
         glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        shader.useProgram();
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glm::mat4 spin(glm::rotate(glm::mat4(1.0f), static_cast<float>(glfwGetTime()) * glm::radians(spinSpeed), spinAxis));
+        model = glm::rotate(glm::mat4(1.0f), static_cast<float>(glfwGetTime()) * glm::radians(orbitSpeed), orbitAxis);
+        model = glm::scale(model, glm::vec3(orbitBodyScale));
+        model = glm::translate(model, glm::vec3(-orbitRadius, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(orbitSpeed), orbitAxis);
+        model = glm::translate(model, glm::vec3(orbitRadius, 0.0f, 0.0f));
+        glUniformMatrix4fv(combinationLocation, 1, GL_FALSE, glm::value_ptr(projection * view * model * spin));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // GLFW post-frame operations
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    // GLFW + OpenGL cleanup operations
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
-    glDeleteBuffers(1, &ebo);
     glfwTerminate();
 
     return 0;
